@@ -226,7 +226,7 @@ CSS custom properties (design tokens) for the whole app. Colors, spacing, shadow
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Sanzzz1125/The-CosmicVerse.git
+git clone https://github.com/BSatya-Saketh/The-CosmicVerse.git
 cd The-CosmicVerse
 ```
 
@@ -289,7 +289,7 @@ npm run dev
 | Styling | CSS Custom Properties (zero UI framework dependency) |
 | Testing | Vitest + React Testing Library |
 | Deployment | Vercel (Client) + Render/Fly.io (Server) |
-| Repo | GitHub → github.com/Sanzzz1125/Satyam-chits |
+| Repo | GitHub → github.com/BSatya-Saketh/The-CosmicVerse |
 
 ---
 
