@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
-export default function TopBar({ onMenuClick, onSearchClick, onAuthClick }) {
+export default function TopBar({ onMenuClick, onSearchClick, onAuthClick, notesOpen }) {
     const fillRef = useRef(null);
     const { theme, toggleTheme } = useTheme();
     const { user } = useAuth();
@@ -29,11 +29,12 @@ export default function TopBar({ onMenuClick, onSearchClick, onAuthClick }) {
             <div style={{
                 position: 'fixed',
                 top: '10px',
-                right: '16px',
+                right: notesOpen ? '376px' : '16px',
                 zIndex: 250,
                 display: 'flex',
                 gap: '8px',
                 alignItems: 'center',
+                transition: 'right 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
             }}>
                 <button
                     onClick={onAuthClick}

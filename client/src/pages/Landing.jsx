@@ -132,7 +132,7 @@ export default function Landing() {
                 <p>The CosmicVerse — Zero to Full-Stack Engineer</p>
                 <p style={{ marginTop: '8px' }}>
                     Built by{' '}
-                    <a href="https://sanketh.live/" target="_blank" rel="noopener noreferrer"
+                    <a href="https://satyasaketh.dev/" target="_blank" rel="noopener noreferrer"
                        style={{ color: 'var(--green)', textDecoration: 'none' }}>
                         B Satya Saketh ↗
                     </a>

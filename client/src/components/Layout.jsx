@@ -46,6 +46,7 @@ export default function Layout() {
                 onMenuClick={() => setSidebarOpen(o => !o)} 
                 onSearchClick={() => setSearchOpen(true)} 
                 onAuthClick={() => setAuthOpen(true)}
+                notesOpen={notesOpen}
             />
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
             <main className="main-content">

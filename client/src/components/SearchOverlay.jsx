@@ -31,8 +31,6 @@ export default function SearchOverlay({ isOpen, onClose }) {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose]);
 
-    if (!isOpen) return null;
-
     // Perform query filtering
     const normalizedQuery = query.toLowerCase().trim();
     const results = normalizedQuery === '' 
@@ -44,6 +42,18 @@ export default function SearchOverlay({ isOpen, onClose }) {
                 item.keywords.some(kw => kw.includes(normalizedQuery))
             );
         }).slice(0, 8); // cap results to top 8 items
+
+    // Scroll active item into view
+    useEffect(() => {
+        if (resultsRef.current && results.length > 0) {
+            const activeEl = resultsRef.current.children[selectedIndex];
+            if (activeEl) {
+                activeEl.scrollIntoView({ block: 'nearest' });
+            }
+        }
+    }, [selectedIndex, results.length]);
+
+    if (!isOpen) return null;
 
     const handleSelectRoute = (path) => {
         navigate(path);
@@ -64,16 +74,6 @@ export default function SearchOverlay({ isOpen, onClose }) {
             }
         }
     };
-
-    // Scroll active item into view
-    useEffect(() => {
-        if (resultsRef.current && results.length > 0) {
-            const activeEl = resultsRef.current.children[selectedIndex];
-            if (activeEl) {
-                activeEl.scrollIntoView({ block: 'nearest' });
-            }
-        }
-    }, [selectedIndex, results.length]);
 
     return (
         <div className="search-backdrop" onClick={onClose}>

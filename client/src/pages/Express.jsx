@@ -502,7 +502,6 @@ app.use(express.json({ limit: '10kb' }));`} />
 
             <footer className="footer">
                 <p>Express.js · Chapter 07 · The CosmicVerse</p>
-                <a href="https://sanketh.live/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--green)', textDecoration: 'none', marginTop: '6px', display: 'block' }}>B Satya Saketh ↗</a>
             </footer>
         </>
     );

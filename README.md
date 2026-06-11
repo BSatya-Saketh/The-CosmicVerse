@@ -2,7 +2,7 @@
 
 **Complete MERN Stack Learning Platform — Zero to Full Stack Engineer**
 
-> Live: [www.thecosmicverse.in](https://www.thecosmicverse.in) · Built by [B Satya Saketh](https://sanketh.live)
+> Live: [www.thecosmicverse.in](https://www.thecosmicverse.in) · Built by [B Satya Saketh](https://satyasaketh.dev)
 
 ---
 

@@ -530,7 +530,6 @@ const imageUrl = result.secure_url;`} />
 
             <footer className="footer">
                 <p>APIs · Chapter 08 · The CosmicVerse</p>
-                <a href="https://sanketh.live/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--green)', textDecoration: 'none', marginTop: '6px', display: 'block' }}>B Satya Saketh ↗</a>
             </footer>
         </>
     );

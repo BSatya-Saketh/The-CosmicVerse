@@ -1,7 +1,7 @@
 import React from 'react';
 
 const LINKS = [
-    { label: 'Portfolio',  icon: '🌐', url: 'https://sanketh.live/',                                    desc: 'Projects, skills & contact' },
+    { label: 'Portfolio',  icon: '🌐', url: 'https://satyasaketh.dev/',                                    desc: 'Projects, skills & contact' },
     { label: 'GitHub',     icon: '🐙', url: 'https://github.com/Sanzzz1125',                      desc: 'Open source & project code' },
     { label: 'LinkedIn',   icon: '💼', url: 'https://www.linkedin.com/in/sanketh-thatikonda', desc: 'Professional network' },
 ];
@@ -34,7 +34,7 @@ export default function Connect() {
                     If it helped you, if you've got feedback, or if you're looking to collaborate, I'd love to hear from you.
                 </p>
                 <a
-                    href="https://sanketh.live/"
+                    href="https://satyasaketh.dev/"
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -114,7 +114,7 @@ export default function Connect() {
                 <p>The CosmicVerse — Zero to Full-Stack Engineer</p>
                 <p style={{ marginTop: '8px' }}>
                     Built with ❤️ by{' '}
-                    <a href="https://sanketh.live/" target="_blank" rel="noopener noreferrer"
+                    <a href="https://satyasaketh.dev/" target="_blank" rel="noopener noreferrer"
                        style={{ color: 'var(--green)', textDecoration: 'none' }}>
                         B Satya Saketh ↗
                     </a>

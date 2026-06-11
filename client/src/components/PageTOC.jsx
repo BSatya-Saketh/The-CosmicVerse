@@ -31,56 +31,159 @@ export default function PageTOC() {
     const { isCompleted, toggleCompleted } = useProgress();
     const observerRef           = useRef(null);
     const containerRef          = useRef(null); // direct DOM ref for smooth movement
+    const isDraggingRef         = useRef(false);
+    const startYRef             = useRef(0);
+    const startScrollYRef       = useRef(0);
 
-    // ── Scan h2 headings on route change ──────────────────────────────
-    useEffect(() => {
-        // Clear targets immediately on route transition to avoid stale mounts
-        setTargets([]);
+    const handleMouseDown = (e) => {
+        if (e.button !== 0) return; // only left click drags
+        e.preventDefault(); // prevent text selection
+        isDraggingRef.current = true;
+        startYRef.current = e.clientY;
+        startScrollYRef.current = window.scrollY;
+
+        const onMouseMove = (moveEv) => {
+            if (!isDraggingRef.current) return;
+            const el = containerRef.current;
+            if (!el) return;
+            const vh = window.innerHeight;
+            const pillH = el.offsetHeight;
+            const dragRange = vh - pillH;
+            if (dragRange <= 0) return;
+
+            const deltaY = moveEv.clientY - startYRef.current;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            if (maxScroll <= 0) return;
+
+            const deltaScroll = (deltaY / dragRange) * maxScroll;
+            let targetScroll = startScrollYRef.current + deltaScroll;
+            targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+            window.scrollTo(0, targetScroll);
+        };
+
+        const onMouseUp = () => {
+            isDraggingRef.current = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    };
+
+    const mutationObserverRef   = useRef(null);
+
+    const scanSections = () => {
+        // Temporarily stop observing to avoid self-triggering mutations during DOM updates
+        if (mutationObserverRef.current) {
+            mutationObserverRef.current.disconnect();
+        }
+
+        const sections = document.querySelectorAll('.chapter');
+        console.log(`[PageTOC] Scanning sections. Found: ${sections.length}`);
         
-        const timer = setTimeout(() => {
-            const sections = document.querySelectorAll('.chapter');
-            const found = [];
-            const foundTargets = [];
-            sections.forEach((sec, idx) => {
-                const h2  = sec.querySelector('h2');
-                const num = sec.querySelector('.chapter-num');
-                if (!h2) return;
-                const id = `toc-section-${idx}`;
-                sec.setAttribute('id', id);
-                
-                const labelText = h2.textContent.trim();
-                found.push({
-                    id,
-                    num:   num ? num.textContent.trim() : String(idx + 1).padStart(2, '0'),
-                    label: labelText,
-                });
-
-                // Establish clean mounting portal targets in DOM headers
-                const header = sec.querySelector('.chapter-header');
-                if (header) {
-                    let portalTarget = header.querySelector('.chapter-portal-target');
-                    if (!portalTarget) {
-                        portalTarget = document.createElement('div');
-                        portalTarget.className = 'chapter-portal-target';
-                        portalTarget.style.marginLeft = 'auto';
-                        portalTarget.style.display = 'flex';
-                        portalTarget.style.alignItems = 'center';
-                        header.appendChild(portalTarget);
-                    }
-                    foundTargets.push({
-                        target: portalTarget,
-                        label: labelText
-                    });
-                }
+        const found = [];
+        const foundTargets = [];
+        sections.forEach((sec, idx) => {
+            const h2  = sec.querySelector('h2');
+            const num = sec.querySelector('.chapter-num');
+            if (!h2) return;
+            const id = `toc-section-${idx}`;
+            sec.setAttribute('id', id);
+            
+            const labelText = h2.textContent.trim();
+            found.push({
+                id,
+                num:   num ? num.textContent.trim() : String(idx + 1).padStart(2, '0'),
+                label: labelText,
             });
-            setItems(found);
-            setTargets(foundTargets);
-            setActive(found[0]?.id ?? null);
-        }, 150);
+
+            // Establish clean mounting portal targets in DOM headers
+            const header = sec.querySelector('.chapter-header');
+            if (header) {
+                let portalTarget = header.querySelector('.chapter-portal-target');
+                if (!portalTarget) {
+                    portalTarget = document.createElement('div');
+                    portalTarget.className = 'chapter-portal-target';
+                    portalTarget.style.marginLeft = 'auto';
+                    portalTarget.style.display = 'flex';
+                    portalTarget.style.alignItems = 'center';
+                    header.appendChild(portalTarget);
+                }
+                foundTargets.push({
+                    target: portalTarget,
+                    label: labelText
+                });
+            }
+        });
+
+        // Only update state if items have actually changed to prevent infinite loops
+        setItems(prev => {
+            const same = prev.length === found.length && prev.every((item, i) => item.id === found[i].id && item.label === found[i].label);
+            return same ? prev : found;
+        });
+        setTargets(prev => {
+            const same = prev.length === foundTargets.length && prev.every((item, i) => item.target === foundTargets[i].target && item.label === foundTargets[i].label);
+            return same ? prev : foundTargets;
+        });
+
+        // Reconnect observer to document body
+        if (mutationObserverRef.current) {
+            mutationObserverRef.current.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    };
+
+    // ── Scan headings on route change & DOM updates ──────────────────
+    useEffect(() => {
+        // Clear targets and items immediately on route change
+        setItems([]);
+        setTargets([]);
+        setActive(null);
+
+        // Instantiate MutationObserver with chapter mutation filtering
+        const observer = new MutationObserver((mutations) => {
+            let hasChapterMutation = false;
+            for (const m of mutations) {
+                for (const node of m.addedNodes) {
+                    if (node.nodeType === 1) { // Element Node
+                        if (node.classList.contains('chapter') || node.querySelector('.chapter')) {
+                            hasChapterMutation = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasChapterMutation) break;
+                for (const node of m.removedNodes) {
+                    if (node.nodeType === 1) {
+                        if (node.classList.contains('chapter') || node.querySelector('.chapter')) {
+                            hasChapterMutation = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasChapterMutation) break;
+            }
+
+            if (hasChapterMutation) {
+                console.log("[PageTOC] MutationObserver detected chapter addition/removal. Re-scanning...");
+                scanSections();
+            }
+        });
+        mutationObserverRef.current = observer;
+
+        // Perform initial scan
+        scanSections();
+
+        // Backup timer to cover any initial render latency
+        const timer = setTimeout(scanSections, 150);
 
         return () => {
             clearTimeout(timer);
-            setTargets([]);
+            observer.disconnect();
+            mutationObserverRef.current = null;
         };
     }, [location.pathname]);
 
@@ -137,11 +240,13 @@ export default function PageTOC() {
         return () => observerRef.current?.disconnect();
     }, [items]);
 
-    // ── Instant jump to section ───────────────────────────────────────
+    // ── Smooth scroll to section ──────────────────────────────────────
     const scrollToSection = (id) => {
         const el = document.getElementById(id);
         if (!el) return;
-        window.scrollTo({ top: el.offsetTop - 64, behavior: 'instant' });
+        const rect = el.getBoundingClientRect();
+        const absoluteTop = rect.top + window.scrollY;
+        window.scrollTo({ top: absoluteTop - 64, behavior: 'smooth' });
     };
 
     if (!items.length) return null;
@@ -171,6 +276,7 @@ export default function PageTOC() {
                     <div
                         className="page-toc__handle"
                         onMouseEnter={() => setHovered(true)}
+                        onMouseDown={handleMouseDown}
                         aria-hidden="true"
                     >
                         {items.map(({ id }) => (

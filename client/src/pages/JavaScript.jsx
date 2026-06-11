@@ -1064,7 +1064,6 @@ const multiply3 = multiply(3);
 
             <footer className="footer">
                 <p>JavaScript · Chapter 04 · The CosmicVerse</p>
-                <a href="https://sanketh.live/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--green)', textDecoration: 'none', marginTop: '6px', display: 'block' }}>B Satya Saketh ↗</a>
             </footer>
         </>
     );

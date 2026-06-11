@@ -696,7 +696,6 @@ mongoose.connect(process.env.MONGO_URI);`} />
 
             <footer className="footer">
                 <p>MongoDB · Chapter 09 · The CosmicVerse</p>
-                <a href="https://sanketh.live/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--green)', textDecoration: 'none', marginTop: '6px', display: 'block' }}>B Satya Saketh ↗</a>
             </footer>
         </>
     );

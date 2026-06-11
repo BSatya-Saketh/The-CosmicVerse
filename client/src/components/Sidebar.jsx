@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { navSections } from '../data/navData.js';
 import { useProgress } from '../context/ProgressContext.jsx';
 
@@ -9,11 +9,13 @@ export default function Sidebar({ isOpen, onClose }) {
     return (
         <nav className={`sidebar${isOpen ? ' open' : ''}`}>
             <div className="sidebar-logo">
-                <div className="logo-mark">
-                    <div className="logo-text-group">
-                        <div className="logo-title">The Cosmic<span>Verse</span></div>
+                <Link to="/" onClick={onClose} style={{ textDecoration: 'none' }}>
+                    <div className="logo-mark">
+                        <div className="logo-text-group">
+                            <div className="logo-title">The Cosmic<span>Verse</span></div>
+                        </div>
                     </div>
-                </div>
+                </Link>
             </div>
 
             <div className="sidebar-progress">
